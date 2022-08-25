@@ -1,0 +1,43 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap');
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css");
+
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Lato', sans-serif;
+    
+}
+
+body{
+    background-color: #FFE7BF;
+}
+
+h1{
+    color:#A10035;
+    font-weight: bold;
+    
+}
+
+.header{
+    text-align:center;
+    margin: 10px 0;
+}
+
+.dropdown-menu{
+    background-color: #FFE7BF;
+}
+
+.nav-link{
+    color: #A10035; 
+}
+
+.login{
+    background-color: #FFC4C4;
+    color: #A10035;
+}
+
+.login:hover{
+    background-color: #FFC4C4;
+}
+
