@@ -3,6 +3,7 @@ import Home from '../components/Index.vue';
 import PageNotFound from '../components/PageNotFound.vue';
 import AnimalIndex from '../components/animal/Index.vue';
 import AnimalDetails from '../components/animal/Details.vue';
+
 import { trimEnd } from "lodash";
 
 const routes = [

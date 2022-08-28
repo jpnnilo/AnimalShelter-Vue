@@ -25,4 +25,13 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get('/animal', [AnimalController::class, 'index']);
 
 //get the details of animal
-Route::get('/animal/{id}', [AnimalController::class, 'show'])->name('tangina');
+Route::get('/animal/{id}', [AnimalController::class, 'show']);
+
+//store/create animal 
+Route::post('/animal' ,[AnimalController::class,'store']);
+
+// update details of animal
+Route::put('/animal/{id}', [AnimalController::class, 'update']);
+
+//delete animal
+Route::delete('/animal/{id}', [AnimalController::class, 'destroy']);

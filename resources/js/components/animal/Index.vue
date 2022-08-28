@@ -1,91 +1,121 @@
 <template>
     <h1 class="header">Animals</h1>
-    
    
-        <button type="button" class="btn btn-create"><i class="bi bi-plus-circle-fill"></i> Create </button>
+   
+        <button type="button" class="btn btn-create" @click="create()"><i class="bi bi-plus-circle-fill"></i> Create </button>
 
 
     <div class="row">
-        <div class="col-lg-3 col-md-4 col-sm-6 my-2" v-for="data in animals" :key="data.id">
+        <div class="col-lg-3 col-md-4 col-sm-6 my-2" v-for="animal in animals" :key="animal.id">
              
             <div class="card">
                 
                 <img src="/images/noImage.jpg" class="card-img-top" alt="...">
                 <div class="card-body">
-                    <h5 class="card-title">{{data.name}}</h5>
-                    <p class="card-text">Age: {{ data.age }} </p>
-                    <p class="card-text">Gender: {{ data.gender }}</p>
-                    <p class="card-text">Type: {{ data.type }}</p>
-                    <p class="card-text">Breed: {{ data.breed }}</p>
+                    <h5 class="card-title">{{animal.name}}</h5>
+                    <p class="card-text">Age: {{ animal.age }} </p>
+                    <p class="card-text">Gender: {{ animal.gender }}</p>
+                    <p class="card-text">Type: {{ animal.type }}</p>
+                    <p class="card-text">Breed: {{ animal.breed }}</p>
 
-                    <router-link :to="{name: 'AnimalDetails', params: {id:data.id}}"><button type="button" Class="btn btn-view"><i class="bi bi-eye"></i></button></router-link>
+                    <router-link :to="{name: 'AnimalDetails', params: {id:animal.id}}"><button type="button" Class="btn btn-view"><i class="bi bi-eye"></i></button></router-link>
                     
-                    <a href=""><button type="button" Class="btn btn-edit"><i class="bi bi-pencil-square"></i></button></a>
-                    <form method="POST" action="" > 
-                        <button type="submit" Class="btn btn-delete"><i class="bi bi-trash"></i></button>
-                    </form>
+                    <button type="button" Class="btn btn-edit" @click="edit(animal.id)"><i class="bi bi-pencil-square"></i></button>
+                    <button type="button" Class="btn btn-delete" @click="destroy(animal.id)"><i class="bi bi-trash"></i></button>
                 </div>
             </div>
         </div>
-    </div>
+    </div>  
 
-    <div class="create">
-        
-    </div>
-    
-    
-
-    <!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-  Launch demo modal
-</button>
-
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form >
-            <div class="mb-3">
-                <label for="exampleFormControlInput1" class="form-label">Email address</label>
-                <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com">
-            </div>
-            <button type="submit" class="btn btn-default">Submit</button>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<Modal></Modal>
+<Modal @save="save" :animal="animal" :modalTitle="modalTitle"/>
 
 </template>
 
 <script>
 import Modal from './Modal.vue'
 
-
 export default {
-    // props:['animals'],
+
     data(){
         return{
+            animal:{},
             animals:[],
+            modalTitle:'',
         }
     },
     methods:{
-        
+
+        //show create modal
+        create(){
+            this.animal = {};
+            $('#modal').modal('show');
+            this.modalTitle = "Create Animal";
+        },
+
+        // create animal 
+        store(animal){
+            axios.post('/api/animal', {...animal}) //... removes the 'proxy' object (ES6) {object}
+            .then(response => {
+                console.log('response');
+                console.log(response); 
+                this.animals.push(response.data.animal);
+            })
+            .catch(error=>{console.log(error)})
+            .finally(() => this.loading = false)
+        },
+
+        //show animal details to modal/edit
+        edit(id){
+            this.modalTitle = "Update Animal";
+            axios.get(`api/animal/${id}`)
+            .then(response=>{
+            (this.animal = response.data.animal); 
+            console.log(response.data.animal);
+            });
+            $('#modal').modal('show');
+        },
+
+        //update animal
+        update(animal){
+           
+            let animals = this.animals;
+            let animals_id = animals.map(a => a.id); //  get the animals just ID from object this.animals 
+            let animalIndex = animals_id.indexOf(animal.id) // get the animal index 
+            // let animals = JSON.parse(JSON.stringify(this.animals.id)); // access proxy object
+            axios.put(`/api/animal/${animal.id}`, {...animal})
+            .then(response => { 
+                console.log(response);
+                animals.splice(animalIndex, 1, response.data.animal); // from animal index remove 1 then add the response data
+            })
+            .catch(error=>{error})  
+            
+        },
+
+        save(animal){   
+            if(animal.id){
+                this.update(animal)
+            }else{
+                this.store(animal)
+            }
+        },
+
+        destroy(id){
+            console.log('delete' + id);
+            let animals = this.animals;
+            let animals_id = animals.map(a => a.id); //  get the animals just ID from object this.animals 
+            let animalIndex = animals_id.indexOf(id) // get the animal index 
+            axios.delete(`/api/animal/${id}`)
+            .then(response => {
+                console.log(response);  
+                animals.splice(animalIndex, 1); // from animal index remove 1 then add the response data
+                console.log('animal has been deleted');
+            })
+            .catch(error=>{console.log(error);})
+        }
+
     },
     components:{Modal},
-
-    mounted() {
+    created() {
         //get all animals
         // none ES6 
         // const self = this;
@@ -98,12 +128,15 @@ export default {
         // })
         .catch(error => {console.log(error)})
     },
+    
+    
 }
 </script>
 
 
 
 <style scoped>
+
 p{
     margin:0;
     font-weight:bold;
@@ -141,24 +174,24 @@ form{
 
 }
 
-.btn-view{
+.btn-edit{
     background-color: #FFE7BF;
 }
-.btn-view:hover{
+.btn-edit:hover{
     color: #A10035;
 }
 
-.btn-edit{
+.btn-view{
     background-color: #FF869E;
     color:white;
+}
+.btn-view:hover{
+   border-color: #A10035;
 }
 
 .btn-delete{
     background-color:#A10035;
     color:#FFE7BF;
 }
-
-
-   
 
 </style>
