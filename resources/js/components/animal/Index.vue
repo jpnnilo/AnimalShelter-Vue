@@ -78,40 +78,38 @@ export default {
         //update animal
         update(animal){
            
-            let animals = this.animals;
-            let animals_id = animals.map(a => a.id); //  get the animals just ID from object this.animals 
+            let animals_id = (this.animals).map(a => a.id); //  get the animals just ID from object this.animals 
             let animalIndex = animals_id.indexOf(animal.id) // get the animal index 
             // let animals = JSON.parse(JSON.stringify(this.animals.id)); // access proxy object
             axios.put(`/api/animal/${animal.id}`, {...animal})
             .then(response => { 
                 console.log(response);
-                animals.splice(animalIndex, 1, response.data.animal); // from animal index remove 1 then add the response data
+                (this.animals).splice(animalIndex, 1, response.data.animal); // from animal index remove 1 then add the response data
             })
             .catch(error=>{error})  
             
         },
 
-        save(animal){   
-            if(animal.id){
-                this.update(animal)
-            }else{
-                this.store(animal)
-            }
-        },
-
         destroy(id){
             console.log('delete' + id);
-            let animals = this.animals;
-            let animals_id = animals.map(a => a.id); //  get the animals just ID from object this.animals 
+            let animals_id = (this.animals).map(a => a.id); //  get the animals just ID from object this.animals 
             let animalIndex = animals_id.indexOf(id) // get the animal index 
             axios.delete(`/api/animal/${id}`)
             .then(response => {
                 console.log(response);  
-                animals.splice(animalIndex, 1); // from animal index remove 1 then add the response data
+                (this.animals).splice(animalIndex, 1); // from animal index remove 1 then add the response data
                 console.log('animal has been deleted');
             })
             .catch(error=>{console.log(error);})
-        }
+        },
+
+        save(animal){   
+        if(animal.id){
+            this.update(animal)
+        }else{
+            this.store(animal)
+        }   
+        },
 
     },
     components:{Modal},

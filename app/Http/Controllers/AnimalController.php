@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Animal;
+use App\Models\Disease;
 use App\Models\AnimalImage;
 use Illuminate\Http\Request;
 
@@ -14,8 +15,26 @@ class AnimalController extends Controller
     }
 
     public function show($id){
-        $animal = Animal::with(['adopter','rescuer'])->find($id);
-        return response()->json(compact('animal'));
+        $animal = Animal::with(['adopter','rescuer','diseases'])->find($id);
+        foreach ($animal->diseases as $diseases) {
+            $disease_array[] = $diseases->pivot->disease_id;
+            //get all diseases id from pivot table the pass it to array
+       }
+           
+       //this is to populate dropdown and check if the animal already has that disease
+       if(empty($disease_array)){
+           $disease = Disease::all();
+             
+       }else{
+           $disease = Disease::whereNotIn('id', $disease_array)->get();
+           //select all diseases id where not in id of array $disease_array
+       }
+
+       //check if someone is login
+       // $auth = (isset(auth()->user()->name) ? auth()->user()->name : '');
+
+       return response()->json(compact('animal','disease'));
+
     }
 
     public function store(Request $request){
@@ -49,6 +68,21 @@ class AnimalController extends Controller
         // }
     }
 
+    public function addDisease(Request $request, $id){
+
+        $validate = $request->validate([
+            'disease'=>'required'
+        ]);
+        
+        $animal = Animal::find($id);
+        $animal->diseases()->attach($request->disease);
+        $disease = $animal->diseases()->where('disease_id', $request->disease)->first(); //get the animal latest added disease
+        $message = "Disease has been added";
+        return response()->json(compact('message','disease'));
+    }
+
+    
+
     public function update(Request $request, $id){
 
         $validate = $request->validate([
@@ -70,10 +104,21 @@ class AnimalController extends Controller
         return response()->json(compact('animal'));
     }
 
+
+    public function removeDisease(Request $request, $id){
+        $animal = Animal::find($id);
+        $animal->diseases()->detach($request->disease_id);
+    
+        $message = "Disease has been removed!";
+        return response()->json(compact('message'));
+    }
+
+
     public function destroy($id){
         Animal::find($id)->delete();
         $message = "Animal has been deleted";
-        return response()->json(compact('message'));
-    }
+        return response()-> json(compact('message'));
+    }   
+
 
 }

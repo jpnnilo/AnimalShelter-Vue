@@ -20,12 +20,14 @@ class DatabaseSeeder extends Seeder
        
         $adopter = AdopterSeeder::class;
         $rescuer = RescuerSeeder::class;
+        $disease = DiseaseSeeder::class;
         $animal = AnimalSeeder::class; 
+        $animalDisease = AnimalDiseaseSeeder::class;
         
-        $this->call(compact('adopter','rescuer','animal'));
+        $this->call(compact('adopter','rescuer','animal','disease','animalDisease'));
 
         User::factory(10)->create();
-
+        
         // \App\Models\User::factory()->create([
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',

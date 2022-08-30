@@ -27,11 +27,15 @@ Route::get('/animal', [AnimalController::class, 'index']);
 //get the details of animal
 Route::get('/animal/{id}', [AnimalController::class, 'show']);
 
+Route::post('/animal/disease/{id}',[AnimalController::class, 'addDisease']);
+
 //store/create animal 
 Route::post('/animal' ,[AnimalController::class,'store']);
 
 // update details of animal
 Route::put('/animal/{id}', [AnimalController::class, 'update']);
+
+Route::delete('/animal/disease/{id}',[AnimalController::class, 'removeDisease']);
 
 //delete animal
 Route::delete('/animal/{id}', [AnimalController::class, 'destroy']);
