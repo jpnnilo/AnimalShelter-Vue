@@ -1,38 +1,18 @@
 <template>
     <h1 class="header">Animals</h1>
    
-   
-        <button type="button" class="btn btn-create" @click="create()"><i class="bi bi-plus-circle-fill"></i> Create </button>
-
+    <button type="button" class="btn btn-create" @click="create()"><i class="bi bi-plus-circle-fill"></i> Create </button>
 
     <div class="row">
-        <div class="col-lg-3 col-md-4 col-sm-6 my-2" v-for="animal in animals" :key="animal.id">
-             
-            <div class="card">
-                
-                <img src="/images/noImage.jpg" class="card-img-top" alt="...">
-                <div class="card-body">
-                    <h5 class="card-title">{{animal.name}}</h5>
-                    <p class="card-text">Age: {{ animal.age }} </p>
-                    <p class="card-text">Gender: {{ animal.gender }}</p>
-                    <p class="card-text">Type: {{ animal.type }}</p>
-                    <p class="card-text">Breed: {{ animal.breed }}</p>
-
-                    <router-link :to="{name: 'AnimalDetails', params: {id:animal.id}}"><button type="button" Class="btn btn-view"><i class="bi bi-eye"></i></button></router-link>
-                    
-                    <button type="button" Class="btn btn-edit" @click="edit(animal.id)"><i class="bi bi-pencil-square"></i></button>
-                    <button type="button" Class="btn btn-delete" @click="destroy(animal.id)"><i class="bi bi-trash"></i></button>
-                </div>
-            </div>
-        </div>
+        <AnimalCard v-for="animal in animals" :key="animal" :animal="animal" @edit="edit" @delete="destroy"/>
     </div>  
-
-<Modal @save="save" :animal="animal" :modalTitle="modalTitle"/>
+    <Modal @save="save" :animal="animal" :modalTitle="modalTitle"/>
 
 </template>
 
-<script>
+<script>    
 import Modal from './Modal.vue'
+import AnimalCard from './AnimalCard.vue'
 
 export default {
 
@@ -42,7 +22,7 @@ export default {
             animals:[],
             modalTitle:'',
         }
-    },
+    },      
     methods:{
 
         //show create modal
@@ -112,7 +92,7 @@ export default {
         },
 
     },
-    components:{Modal},
+    components:{Modal,AnimalCard},
     created() {
         //get all animals
         // none ES6 

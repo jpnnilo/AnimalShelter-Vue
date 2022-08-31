@@ -35,6 +35,7 @@ Route::post('/animal' ,[AnimalController::class,'store']);
 // update details of animal
 Route::put('/animal/{id}', [AnimalController::class, 'update']);
 
+// detach disease from animal
 Route::delete('/animal/disease/{id}',[AnimalController::class, 'removeDisease']);
 
 //delete animal
